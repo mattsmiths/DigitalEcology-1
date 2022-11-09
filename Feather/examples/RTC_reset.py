@@ -1,5 +1,13 @@
 #To set the time, manually set date below (line 15), change 'False' to 'True', and run once (CTRL + D in Mu). Once it has run, and reset the clock, switch back to Falsem, rerun, and the time be set and remain correct
 
+
+# Load the following libraries onto the circuitpython device:
+#
+# adafruit_bus_device
+#adafruit_pcf8523
+# adafruit_register
+#
+
 import busio
 import adafruit_pcf8523
 import time
