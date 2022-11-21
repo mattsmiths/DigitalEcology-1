@@ -1,0 +1,15 @@
+#Set up Raspberry pi
+#
+#Open terminal, and type the following:
+#Install virtual environment
+pip3 install virtualenv virtualenvwrapper
+nano ~/.bashrc
+
+#Copy the following lines into the file that opens:
+#Virtualenvwrapper settings:
+export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
+export WORKON_HOME=$HOME/.virtualenvs
+export VIRTUALENVWRAPPER_VIRTUALENV=~/.local/bin/virtualenv
+source ~/.local/bin/virtualenvwrapper.sh
+export VIRTUALENVWRAPPER_ENV_BIN_DIR=bin
+
