@@ -13,3 +13,10 @@ export VIRTUALENVWRAPPER_VIRTUALENV=~/.local/bin/virtualenv
 source ~/.local/bin/virtualenvwrapper.sh
 export VIRTUALENVWRAPPER_ENV_BIN_DIR=bin
 
+#Next interminal, create a virtual environment
+mkvirtualenv dig_ecol
+#Activate the virtual environment
+workon dig_ecol
+
+
+
