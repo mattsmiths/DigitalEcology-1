@@ -1,6 +1,8 @@
 ---
 title: "plot_temps"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -16,18 +18,12 @@ When you click the **Knit** button a document will be generated that includes bo
 
 ```{r cars}
 
-data <- read.csv('/Users/jamescrall/Documents/GitHub/DigitalEcology/Feather/examples/TemperatureLogger/logger.csv')
+data <- read.csv('/Users/jamescrall/Documents/GitHub/DigitalEcology/Feather/examples/TemperatureLogger/inside_logger.csv')
 colnames(data) <- c('time', 'pressure', 'temp', 'humidity')
 start.date <- parse_date_time('2022-01-01 00:00:00', "%Y-%m-%d %H:%M:%S")
 data$datenum <- as.numeric(difftime(parse_date_time(data$time, 'ymd-HMS'),start.date))
+
+plot(temp~datenum, data = data, pch = 19, col = "blue", axes = FALSE)
+axis(1)
+axis(2)
 ```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

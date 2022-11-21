@@ -21,8 +21,8 @@ height= int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
 
 
-def write_video():
-    filename = str(time.time())+'.mp4'
+def write_video(tm):
+    filename = str(tm.year) + '-' + str(tm.month) + '-' + str(tm.day) + '_' + str(tm.hour) + '-' + str(tm.minute) + '-' + str(tm.second) + '.mp4'
     writer= cv2.VideoWriter(filename, cv2.VideoWriter_fourcc(*'DIVX'), 20, (width,height))
 
     video_length = 10
@@ -83,7 +83,9 @@ while True:
 	
 	if motion == 1:
 		print('motion detected!')
-		write_video()
+		tm = datetime.now()
+		write_video(tm)
+		ref_frame = None #reset reference frame to none to re-initalize
     
 # Destroying all the windows
 
