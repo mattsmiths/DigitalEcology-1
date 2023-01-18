@@ -34,7 +34,7 @@ rtc = adafruit_pcf8523.PCF8523(myI2C)
 
 
 #Set up temp/humidity/pressure sensor
-sensor = MS8607(myI2C)
+#sensor = MS8607(myI2C)
 sensor = adafruit_ahtx0.AHTx0(i2c)
 
 #Set the filename to log data to

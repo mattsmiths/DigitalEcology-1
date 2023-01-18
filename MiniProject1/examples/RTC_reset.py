@@ -20,7 +20,7 @@ days = ("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Satur
 
 if False:   # change to True if you want to write the time!
     #                     year, mon, date, hour, min, sec, wday, yday, isdst
-    t = time.struct_time((2022,  11,   4,   20,  56,  0,    5,   -1,    -1))
+    t = time.struct_time((2022,  11,   15,   19,  32,  0,    2,   -1,    -1))
     # you must set year, mon, date, hour, min, sec and weekday
     # yearday is not supported, isdst can be set but we don't do anything with it at this time
     
