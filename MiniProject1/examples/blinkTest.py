@@ -20,4 +20,4 @@ while True: #This create a loop so that the code runs continuously after it has 
     led.value = False #Turn the LED off
     time.sleep(2) #delay two seconds
     
-    print('success!')
+    print('success!') #Confirm this worked by printing to the serial port
