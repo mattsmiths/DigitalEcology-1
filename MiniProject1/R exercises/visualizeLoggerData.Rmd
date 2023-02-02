@@ -1,0 +1,78 @@
+---
+title: "Visualizing data from environmental logger"
+output: html_document
+date: "2023-02-01"
+---
+Written by: James Crall
+Ento 375: Digital Ecology (Spring 2023)
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## This is a title!
+
+#Text outside of cells is for commenting and describing
+
+Hashtags can be used for basic formatting, e.g., 
+
+```{r load libraries}
+library(lubridate)
+```
+
+## Loading data
+This section of code will 
+
+```{r load data}
+filename <- '/Users/jamescrall/Documents/GitHub/DigitalEcology/MiniProject1/examples/TemperatureLogger/inside_logger.csv'
+  # Creates a variables 'filename' with the full path of your .csv file from the data logger
+  #
+  # NB This filename will be specific to your computer and will need to be modified.
+  # On mac, a shortcut to finding full pathnames is to control click (or right click), 
+  # and then press 'option', and click 'Copy 'your file' as Pathname'
+  #
+  # On Windows, you can do the same by pressing the Shift Key and right-clicking, then 'Copy as Path'
+
+temp_data <- read.csv(filename)
+  #Reads csv from file directly into a data frame
+
+colnames(temp_data) <- c('time', 'pressure', 'temp', 'humidity')
+  # Manually add column names
+
+head(temp_data)
+  #Very useful function that shows you the first 6 lines of a data frame, with variable names, etc. Especially useful for making sure things 
+```
+#Plot temperature data over time
+
+```{r plot data over time}
+
+start.date <- parse_date_time('2022-01-01 00:00:00', "%Y-%m-%d %H:%M:%S")
+  #Create a reference time point to calculate differences relative to. In this case, our reference time point will be Jan 1, 2022.
+
+temp_data$datenum <- as.numeric(difftime(parse_date_time(temp_data$time, 'ymd-HMS'),start.date))
+  #This function is actually three steps combined:
+  #1: the inner function (parse_date_time function from the lubridate package) takes the timestamp from the 
+
+plot(temp~datenum, data = temp_data, pch = 19, col = "blue", xlab = "Time (days since Jan 1 2022)", ylab = "Temperature (C)")
+  # Things to look for in this kind of plot:
+  # Are the data on approximately the right scale? I.e., if you're measuring temperature in celsius and the data here maximum values in the 1000s, it's time to investigate!
+
+#Stretch exercise: add lines here to make a similar plot for pressure and humidity
+
+```
+
+#Create boxplots for temp data and subsets
+```{r boxplots}
+# Generate overall boxplots
+boxplot(temp_data$temp)
+  #Generates a boxplot for a single variables
+
+boxplot(temp_data$pressure)
+boxplot(temp_data$humidity)
+
+temp_data$early <- temp_data$time < 315
+  # Create a binary 
+  
+#Plot two variables against each other
+plot(humidity~temp, data = temp_data)
+```
