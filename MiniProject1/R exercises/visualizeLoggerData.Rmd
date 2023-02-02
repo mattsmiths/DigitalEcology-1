@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## This is a title!
 
-#Text outside of cells is for commenting and describing
+Text outside of cells is for commenting and describing
 
 Hashtags can be used for basic formatting, e.g., 
 
@@ -70,8 +70,11 @@ boxplot(temp_data$temp)
 boxplot(temp_data$pressure)
 boxplot(temp_data$humidity)
 
-temp_data$early <- temp_data$time < 315
-  # Create a binary 
+temp_data$early <- temp_data$datenum < 315
+  # Create a logical (True/False) variable in the data frame for whether or not the time is before a specific date
+
+boxplot(temp~early, data = temp_data)
+  #This is an alternative way of specifying plotting; 'y~x' denotes plotting y as a function of x. For box plots, if the x variable is categorical or logical (as here), it will generate separate boxplots for each value of the x variable. The formula based plotting can be used with data frames, which have to be specified (here using the 'data=temp_data' input)
   
 #Plot two variables against each other
 plot(humidity~temp, data = temp_data)
