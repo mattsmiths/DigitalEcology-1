@@ -14,6 +14,7 @@ void setup() {
   //setup loop: this runs only once at code initiation
   // initialize digital pin LED_BUILTIN as an output.
   pinMode(led_pin, OUTPUT);
+  Serial.being(9600);
 }
 
 void loop() {
