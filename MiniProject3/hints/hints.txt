@@ -1,0 +1,1 @@
+There are many ways to approach this problem, but try hiding everything that isn't the colour you want to track, then tracking motion.
