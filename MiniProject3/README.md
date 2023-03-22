@@ -37,12 +37,28 @@ guvcview
 
 # Start video stream to display inference from deep learning models
 
-Running an image classifier
+Running an image classifier [ mobilenetv3 trained on ImageNet dataset ]
 ```bash
 cd /home/pi/DigitalEcologyDL/MiniProject3/
 python3 streamDLmodel.py
 ```
 
+Change the resolution of the video stream 
+```bash
+cd /home/pi/DigitalEcologyDL/MiniProject3/
+python3 streamDLmodel.py -r medium
+```
+
+```bash
+cd /home/pi/DigitalEcologyDL/MiniProject3/
+python3 streamDLmodel.py -r large
+```
+
+Running an image object detection model [ efficientDet1 trained on COCO dataset ]
+```bash
+cd /home/pi/DigitalEcologyDL/MiniProject3/
+python3 streamDLmodel.py -d
+```
 
 
 
