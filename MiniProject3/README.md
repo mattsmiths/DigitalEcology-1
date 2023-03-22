@@ -5,6 +5,7 @@ Scripts and tutorials for Entomology 375: Digital Ecology
 University of Wisconsin-Madison, Spring 2023
 
 Developed by: Matt Smith
+
 Further instructions available at: https://docs.google.com/document/d/1_DRVoc30KfV1LgBovR911WRT9VqHDDBkiwnvH4ZhpVg/edit?usp=sharing
 
 # Set up
