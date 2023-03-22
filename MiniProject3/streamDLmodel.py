@@ -157,9 +157,12 @@ while True: #Keep running forever
         lbl3 = '[ %s ]'%labels[ind[-3]]
         
         #Display frame
-        cv.putText(frame,'1 - '+classification_label+': %s'%mConf+'% confidence',(int(imWidth*0.15),int(imHeight*0.14)),font,fontScale=(0.5*(imageResolution[0]/640)),color=(125,55,235),thickness=1)
-        cv.putText(frame,'2 - '+lbl2+': %s'%ccs[-2]+'% confidence',(int(imWidth*0.15),int(imHeight*0.18)),font,fontScale=(0.5*(imageResolution[0]/640)),color=(125,55,235),thickness=1)
-        cv.putText(frame,'3 - '+lbl3+': %s'%ccs[-3]+'% confidence',(int(imWidth*0.15),int(imHeight*0.22)),font,fontScale=(0.5*(imageResolution[0]/640)),color=(125,55,235),thickness=1)
+        if mConf > inclusionThreshold:
+            cv.putText(frame,'1 - '+classification_label+': %s'%mConf+'% confidence',(int(imWidth*0.15),int(imHeight*0.14)),font,fontScale=(0.5*(imageResolution[0]/640)),color=(125,55,235),thickness=1)
+        if ccs[-2] > inclusionThreshold:
+            cv.putText(frame,'2 - '+lbl2+': %s'%ccs[-2]+'% confidence',(int(imWidth*0.15),int(imHeight*0.18)),font,fontScale=(0.5*(imageResolution[0]/640)),color=(125,55,235),thickness=1)
+        if ccs[-3] > inclusionThreshold:
+            cv.putText(frame,'3 - '+lbl3+': %s'%ccs[-3]+'% confidence',(int(imWidth*0.15),int(imHeight*0.22)),font,fontScale=(0.5*(imageResolution[0]/640)),color=(125,55,235),thickness=1)
         cv.putText(frame,'fps: %s '%np.round(1/fpsFinal,3),(int(imWidth*0.15),int(imHeight*0.08)),font,fontScale=(0.5*(imageResolution[0]/640)),color=(125,55,235),thickness=1)
         cv.imshow('output', frame)
         
