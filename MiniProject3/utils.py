@@ -6,10 +6,11 @@ import datetime
 import cv2 as cv
 import os
 import csv
+import argparse
 
 def load_labels(path): # Read the labels from the text file as a Python list.
-	with open(path, 'r') as f:
-		return [line.strip() for i, line in enumerate(f.readlines())]
+    with open(path, 'r') as f:
+        return [line.strip() for i, line in enumerate(f.readlines())]
 
 
 
@@ -45,66 +46,62 @@ def softmax(x):
     return e_x / np.nansum(e_x)
 
 def classify_image(interpreter, image, top_k=1):
-	tensor_index = interpreter.get_input_details()[0]['index']
-	interpreter.set_tensor(tensor_index, image)
+    tensor_index = interpreter.get_input_details()[0]['index']
+    interpreter.set_tensor(tensor_index, image)
 
-	interpreter.invoke()
-	output_details = interpreter.get_output_details()[0]
-	output = np.squeeze(interpreter.get_tensor(output_details['index']))
+    interpreter.invoke()
+    output_details = interpreter.get_output_details()[0]
+    output = np.squeeze(interpreter.get_tensor(output_details['index']))
 
-	scale, zero_point = output_details['quantization']
-	output = scale * (output - zero_point)
+    scale, zero_point = output_details['quantization']
+    output = scale * (output - zero_point)
 
-	ordered = np.argpartition(-output, top_k)
-	return [(i, output[i]) for i in ordered[:top_k]][0]
+    ordered = np.argpartition(-output, top_k)
+    return [(i, output[i]) for i in ordered[:top_k]][0]
 
 
 #Create folder for saving detections in CSVs:
 def detectionsFolderCreate():
-	baseSave = '/home/pi/Documents/detections/'
-	if not os.path.isdir('/home/pi/Documents/detections/'):
-		os.mkdir('/home/pi/Documents/detections/')
+    baseSave = '/home/pi/Documents/detections/'
+    if not os.path.isdir('/home/pi/Documents/detections/'):
+        os.mkdir('/home/pi/Documents/detections/')
 
-	timeObj = datetime.datetime.now()
-	tempDateName = '%s-%02d-%02d/'%(timeObj.year,timeObj.month,timeObj.day)
-	if not os.path.isdir('/home/pi/Documents/detections/'+tempDateName):
-		os.mkdir('/home/pi/Documents/detections/'+tempDateName)
-		os.mkdir('/home/pi/Documents/detections/'+tempDateName+'images/')
-	return tempDateName
+    timeObj = datetime.datetime.now()
+    tempDateName = '%s-%02d-%02d/'%(timeObj.year,timeObj.month,timeObj.day)
+    if not os.path.isdir('/home/pi/Documents/detections/'+tempDateName):
+        os.mkdir('/home/pi/Documents/detections/'+tempDateName)
+        os.mkdir('/home/pi/Documents/detections/'+tempDateName+'images/')
+    return tempDateName
+
+def resolutionKey(in1):
+    temp = str(in1).lower()
+    if temp == 'medium':
+        out = (1280,720)
+    elif temp == 'small':
+        out = (640,480)
+    elif temp == 'medium2':
+        out = (1920,1080)
+    elif temp == 'large':
+        out = (2592,1944)
+    return out
+
 
 def cmdline_run():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        '-c', '--capture_stills', default=False, action='store_true',
+        '-c', '--no_saved_stills', default=False, action='store_true',
         help='save single images when triggered')
     parser.add_argument(
-        '-D', '--in_systemd', action='store_true',
-        help='running in sysd, reset watchdog')
+        '-r', '--resolution', default='small',
+        help='set camera resolution "small" default, options: small, medium, medium2, large')
     parser.add_argument(
-        '-f', '--fake', default=False, action='store_true',
-        help='fake client detection')
+        '-t', '--threshold', default=0.35,
+        help='inclusion threshold as proportion out of 1, default: 0.35')
     parser.add_argument(
-        '-l', '--loc', type=str, required=True,
-        help='camera locator (ip address or /dev/videoX)')
+        '-d', '--detection', default=False, action='store_true',
+        help='Run detection models or classification models: classification by default')
     parser.add_argument(
-        '-n', '--name', default=None,
-        help='camera name (overrides automatic name detection)')
-    parser.add_argument(
-        '-p', '--password', default=None,
-        help='camera password')
-    parser.add_argument(
-        '-P', '--profile', default=False, action='store_true',
-        help='profile (requires yappi)')
-    parser.add_argument(
-        '-r', '--retry', default=False, action='store_true',
-        help='retry on acquisition errors')
-    parser.add_argument(
-        '-t', '--thumbnails', default=False, action='store_true',
-        help='save downsampled images as thumbnails')
-    parser.add_argument(
-        '-u', '--user', default=None,
-        help='camera username')
-    parser.add_argument(
-        '-v', '--verbose', action='store_true',
-        help='enable verbose output')
+        '-b', '--birds', default=False, action='store_true',
+        help='Run models trained on iNaturalist birds datasets')
     args = parser.parse_args()
+    return args
