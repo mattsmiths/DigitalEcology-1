@@ -190,7 +190,7 @@ while True: #Keep running forever
     else:
         labelsDetect = interpreter.get_tensor(output_indexC)
         scre = interpreter.get_tensor(output_indexS)
-        frame = utils.visualize(frame,predictions[0],labelsDetect[0],labels,scre[0],(imHeight,imWidth),0.23)
+        frame = utils.visualize(frame,predictions[0],labelsDetect[0],labels,scre[0],(imHeight,imWidth),inclusionThreshold)
         cv.imshow('output', frame)
         
         mConf = scre[0][0]
