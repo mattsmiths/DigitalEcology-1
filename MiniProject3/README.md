@@ -35,7 +35,7 @@ A Guided User Interface (GUI) should appear that allows you to explore the USB-c
 guvcview
 ```
 
-# Start video stream to display inference from deep learning models
+# Start video stream and display inference from deep learning models
 
 Running an image classifier [ mobilenetv3 trained on ImageNet dataset ]
 ```bash
