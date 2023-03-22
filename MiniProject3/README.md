@@ -39,7 +39,7 @@ guvcview
 
 Running an image classifier
 ```bash
-cd /home/pi/DigitalEcologyDL/
+cd /home/pi/DigitalEcologyDL/MiniProject3/
 python3 streamDLmodel.py
 ```
 
