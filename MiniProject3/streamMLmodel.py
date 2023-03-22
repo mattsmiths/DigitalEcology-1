@@ -1,5 +1,16 @@
-#import modules
+"""
+Script that will load the specified model [ classification or detection ]
+- opens stream to display results
+- takes arguments in the form of flags through command line
+- "--resolution" inputs are "small", "medium", "medium2","large"
+- "--detection" will call a detection model, else classification model
+- "--threshold" sets the threshold for inclusion of inferred data
+- "--birds" set true for loading the specified model trained on only birds from iNaturalist dataset
+- "--no_saved_stills" turns off saving still images 
+"""
 
+
+#import modules
 from tflite_runtime.interpreter import Interpreter 
 from PIL import Image
 import numpy as np
@@ -8,82 +19,44 @@ import datetime
 import cv2 as cv
 import os
 import csv
+import utils
 font = cv.FONT_HERSHEY_DUPLEX
 
 
-detectModel = True
-#imageResolution = (2592,1944)
-imageResolution = (1920,1080)
-#imageResolution = (1280,720)
-#imageResolution = (640,480)
-#focus = 128# min= 128 (focal distance farther) , max = 990 (focal distance is closer)
 
 
-def load_labels(path): # Read the labels from the text file as a Python list.
-  with open(path, 'r') as f:
-    return [line.strip() for i, line in enumerate(f.readlines())]
+args = utils.cmdline_run()
+detectModel = args.detection
+onlyBirds = args.birds
+inclusionThreshold = args.threshold
+no_saved_stills = args.no_saved_stills
+if float(inclusionThreshold) > 1:inclusionThreshold/=100
 
 
 
-def visualize(im1,bbx,clss,clsKey,scores,sz1,thresh=0.25):
+#### Loading in models based on command line arguments ####
 
-    for ind1,detection in enumerate(bbx):
-    # Draw bounding_box
-        if scores[ind1] < thresh:
-            continue
-        #start_point = (int(detection[0]*sz1[1]),int(detection[1]*sz1[0]))
-        #end_point = (detection[0]+detection[2])*sz1[1], (detection[1]+detection[3])*sz1[0]
-        #end_point = int((detection[2])*sz1[1]), int((detection[3])*sz1[0])
-        
-        start_point = (int(detection[1]*sz1[1]),int(detection[0]*sz1[0]))
-        end_point = int((detection[3])*sz1[1]),int((detection[2])*sz1[0])
-        c1 = (55,240,50)
-        thickness = 2
-        cv.rectangle(im1, start_point, end_point,c1,thickness)
-
-        # Draw label and score
-        category_name = clsKey[int(clss[ind1])]
-        probability = round(scores[ind1]*100, 2)
-        result_text = category_name + ' (' + str(probability) + '%)'
-        text_location = (start_point[0],start_point[1])
-        cv.putText(im1, result_text, text_location, cv.FONT_HERSHEY_PLAIN,
-                    3, (255,255,255), 4)
-    return im1
-
-
-def softmax(x):
-    """Compute softmax values for each sets of scores in x."""
-    e_x = np.exp(x - np.nanmax(x))
-    return e_x / np.nansum(e_x)
-
-def classify_image(interpreter, image, top_k=1):
-  tensor_index = interpreter.get_input_details()[0]['index']
-  interpreter.set_tensor(tensor_index, image)
-
-  interpreter.invoke()
-  output_details = interpreter.get_output_details()[0]
-  output = np.squeeze(interpreter.get_tensor(output_details['index']))
-
-  scale, zero_point = output_details['quantization']
-  output = scale * (output - zero_point)
-
-  ordered = np.argpartition(-output, top_k)
-  return [(i, output[i]) for i in ordered[:top_k]][0]
-
-
-
-
-data_folder = "/home/pi/Downloads/"
+# Setting directory paths for models and corresponding labels
+data_folder = "/home/pi/DigitalEcology/MiniProject3_2/models/"
 if not detectModel:
-    model_path = data_folder + "lite-model_imagenet_mobilenet_v3_large_075_224_classification_5_metadata_1.tflite"
-    # Read class labels.
-    labels = load_labels("/home/pi/Downloads/ImageNetlabels.txt")
-else:
-    model_path = data_folder + "lite-model_efficientdet_lite1_detection_metadata_1.tflite"
-    # Read class labels.
-    labels = load_labels("/home/pi/Downloads/coco-labels-paper.txt")
+    if not onlyBirds:
+        model_path = data_folder + "lite-model_imagenet_mobilenet_v3_large_075_224_classification_5_metadata_1.tflite"
+        labels = utils.load_labels("/home/pi/DigitalEcology/MiniProject3_2/labels/ImageNetlabels.txt")
+    else:
+        model_path = data_folder + "mobileV2_fullTrain_aves_model.tflite"
+        labels = utils.load_labels("/home/pi/DigitalEcology/MiniProject3_2/labels/mobileV2_aves_labels.txt")
+
+elif detectModel == True:
+    if not onlyBirds:
+        model_path = data_folder + "lite-model_efficientdet_lite1_detection_metadata_1.tflite"
+        labels = utils.load_labels("/home/pi/DigitalEcology/MiniProject3_2/labels/coco-labels-paper.txt")
+    else:
+        print('Detection model trained on birds is currently training (~6 hours left)')
+        print('Loading efficientDet trained on COCO dataset temporarily')
+        model_path = data_folder + "lite-model_efficientdet_lite1_detection_metadata_1.tflite"
+        labels = utils.load_labels("/home/pi/DigitalEcology/MiniProject3_2/labels/coco-labels-paper.txt")
     
-#label_path = data_folder + "labels_mobilenet_quant_v1_224.txt"
+    
 interpreter = Interpreter(model_path)
 print("Model Loaded Successfully.")
 interpreter.allocate_tensors()
@@ -91,8 +64,6 @@ _, height, width, _ = interpreter.get_input_details()[0]['shape']
 print("Image Shape (", width, ",", height, ")")
 
 
-
-#interpreter.allocate_tensors()
 input_details = interpreter.get_input_details()
 output_details = interpreter.get_output_details()
 input_index = interpreter.get_input_details()[0]["index"]
@@ -100,9 +71,10 @@ output_index = interpreter.get_output_details()[0]["index"]
 if detectModel:
     output_indexC  = interpreter.get_output_details()[1]["index"]
     output_indexS = interpreter.get_output_details()[2]["index"]
-    labels = load_labels("/home/pi/Downloads/coco-labels-paper.txt")
 
-#Take in video live from webcam
+
+#Set the image resolution as specified by command line arguments
+imageResolution = utils.resolutionKey(args.resolution)
 cap = cv.VideoCapture('/dev/video0')
 attr = getattr(cv,'CAP_PROP_FRAME_WIDTH')
 cap.set(attr,imageResolution[0])
@@ -116,21 +88,18 @@ cap.set(attr,30)
 #cap.set(attr,focus)
 
 
-#Create folder for saving detections in CSVs:
-baseSave = '/home/pi/Documents/detections/'
-if not os.path.isdir('/home/pi/Documents/detections/'):os.mkdir('/home/pi/Documents/detections/')
-timeObj = datetime.datetime.now()
-tempDateName = '%s-%02d-%02d/'%(timeObj.year,timeObj.month,timeObj.day)
-if not os.path.isdir('/home/pi/Documents/detections/'+tempDateName):
-    os.mkdir('/home/pi/Documents/detections/'+tempDateName)
-    os.mkdir('/home/pi/Documents/detections/'+tempDateName+'images/')
+
+# Create the directory to save detections
+tempDateName = utils.detectionsFolderCreate()
+
 
 
 #check that camera can be used
 if not cap.isOpened():
     print("Cannot open camera")
     exit()
-    
+
+# confirm the image size
 ret,frame = cap.read()
 imHeight,imWidth,imZ = np.shape(frame)
 
@@ -162,6 +131,7 @@ while True: #Keep running forever
         image = (np.expand_dims(image,0)).astype(np.uint8)
     else:
         image = (np.expand_dims(image/255,0)).astype(np.float32)
+    
     #Run inference from model
     interpreter.set_tensor(input_index, image)
     interpreter.invoke()
@@ -173,12 +143,14 @@ while True: #Keep running forever
     if len(fpsTail)>5:fpsTail.pop(0)
     fpsFinal = np.nanmean(fpsTail)
     
+    #Post-processing for classification models
     if not detectModel:
         # Return the classification label of the image.
         label_id = np.argmax(predictions)
         classification_label = '[ %s ]'%labels[label_id]
-        confidence = softmax(predictions)[0]
+        confidence = utils.softmax(predictions)[0]
         mConf = np.round(confidence[np.argmax(confidence)]*100,2)
+        iConf = confidence[np.argmax(confidence)]
         ind = np.argsort(confidence)[-3:]
         ccs = [np.round(elem*100,2) for elem in confidence[ind]]
         lbl2 = '[ %s ]'%labels[ind[-2]]
@@ -191,12 +163,13 @@ while True: #Keep running forever
         cv.putText(frame,'fps: %s '%np.round(1/fpsFinal,3),(int(imWidth*0.15),int(imHeight*0.08)),font,fontScale=(0.5*(imageResolution[0]/640)),color=(125,55,235),thickness=1)
         cv.imshow('output', frame)
         
-        if mConf > 40:
+        if iConf > inclusionThreshold:
             tname = datetime.datetime.now()
             imName = '%s-%02d-%02d_%02d-%02d-%02d'%(tname.year,tname.month,tname.day,tname.hour,tname.minute,tname.second)
             imName_s = '%s-%02d-%02d_%02d'%(tname.year,tname.month,tname.day,tname.hour)
             imNameSave = '/home/pi/Documents/detections/'+tempDateName+'images/'+imName+'.jpg'
-            cv.imwrite(imNameSave,frame)
+            if not no_saved_stills:
+                cv.imwrite(imNameSave,frame)
             
             detctSave = '/home/pi/Documents/detections/'+tempDateName+imName_s+'.csv'
             if os.path.isfile(detctSave) == False: #make new file everyday??
@@ -217,18 +190,19 @@ while True: #Keep running forever
     else:
         labelsDetect = interpreter.get_tensor(output_indexC)
         scre = interpreter.get_tensor(output_indexS)
-        frame = visualize(frame,predictions[0],labelsDetect[0],labels,scre[0],(imHeight,imWidth),0.23)
+        frame = utils.visualize(frame,predictions[0],labelsDetect[0],labels,scre[0],(imHeight,imWidth),0.23)
         cv.imshow('output', frame)
         
         mConf = scre[0][0]
         classification_label = labels[int(labelsDetect[0][0])]
-        if mConf > 0.5:
+        if mConf > inclusionThreshold:
             
             tname = datetime.datetime.now()
             imName = '%s-%02d-%02d_%02d-%02d-%02d'%(tname.year,tname.month,tname.day,tname.hour,tname.minute,tname.second)
             imName_s = '%s-%02d-%02d_%02d'%(tname.year,tname.month,tname.day,tname.hour)
             imNameSave = '/home/pi/Documents/detections/'+tempDateName+'images/'+imName+'.jpg'
-            cv.imwrite(imNameSave,frame)
+            if not no_saved_stills:
+                cv.imwrite(imNameSave,frame)
             
             detctSave = '/home/pi/Documents/detections/'+tempDateName+imName_s+'.csv'
             if os.path.isfile(detctSave) == False: #make new file every??
@@ -251,6 +225,10 @@ while True: #Keep running forever
     if keyCode != -1:
         break
     if camSave >0:camSave-=1
+    
+    
 #When everything is done, release the webcam
 cap.release()
 cv.destroyAllWindows()
+
+
