@@ -41,7 +41,7 @@ data_folder = "/home/pi/DigitalEcologyDL/MiniProject3/models/"
 if not detectModel:
     if not onlyBirds:
         model_path = data_folder + "lite-model_imagenet_mobilenet_v3_large_075_224_classification_5_metadata_1.tflite"
-        labels = utils.load_labels("/home/pi/DigitalEcologyDL/MiniProject3/labels/ImageNetlabels.txt")
+        labels = utils.load_labels("/home/pi/DigitalEcologyDL/MiniProject3/labels/imageNetLabels.txt")
     else:
         model_path = data_folder + "mobileV2_fullTrain_aves_model.tflite"
         labels = utils.load_labels("/home/pi/DigitalEcologyDL/MiniProject3/labels/mobileV2_aves_labels.txt")
@@ -222,7 +222,7 @@ while True: #Keep running forever
     # Stop if any key is pressed
     keyCode = cv.waitKey(10)
     print(keyCode)
-    if keyCode != -1:
+    if keyCode != 255:
         break
     if camSave >0:camSave-=1
     
