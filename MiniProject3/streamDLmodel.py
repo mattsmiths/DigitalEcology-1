@@ -37,24 +37,24 @@ if float(inclusionThreshold) > 1:inclusionThreshold/=100
 #### Loading in models based on command line arguments ####
 
 # Setting directory paths for models and corresponding labels
-data_folder = "/home/pi/DigitalEcology/MiniProject3_2/models/"
+data_folder = "/home/pi/DigitalEcologyDL/MiniProject3/models/"
 if not detectModel:
     if not onlyBirds:
         model_path = data_folder + "lite-model_imagenet_mobilenet_v3_large_075_224_classification_5_metadata_1.tflite"
-        labels = utils.load_labels("/home/pi/DigitalEcology/MiniProject3_2/labels/ImageNetlabels.txt")
+        labels = utils.load_labels("/home/pi/DigitalEcologyDL/MiniProject3/labels/ImageNetlabels.txt")
     else:
         model_path = data_folder + "mobileV2_fullTrain_aves_model.tflite"
-        labels = utils.load_labels("/home/pi/DigitalEcology/MiniProject3_2/labels/mobileV2_aves_labels.txt")
+        labels = utils.load_labels("/home/pi/DigitalEcologyDL/MiniProject3/labels/mobileV2_aves_labels.txt")
 
 elif detectModel == True:
     if not onlyBirds:
         model_path = data_folder + "lite-model_efficientdet_lite1_detection_metadata_1.tflite"
-        labels = utils.load_labels("/home/pi/DigitalEcology/MiniProject3_2/labels/coco-labels-paper.txt")
+        labels = utils.load_labels("/home/pi/DigitalEcologyDL/MiniProject3/labels/coco-labels-paper.txt")
     else:
         print('Detection model trained on birds is currently training (~6 hours left)')
         print('Loading efficientDet trained on COCO dataset temporarily')
         model_path = data_folder + "lite-model_efficientdet_lite1_detection_metadata_1.tflite"
-        labels = utils.load_labels("/home/pi/DigitalEcology/MiniProject3_2/labels/coco-labels-paper.txt")
+        labels = utils.load_labels("/home/pi/DigitalEcologyDL/MiniProject3/labels/coco-labels-paper.txt")
     
     
 interpreter = Interpreter(model_path)
