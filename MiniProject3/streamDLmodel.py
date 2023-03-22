@@ -28,7 +28,7 @@ font = cv.FONT_HERSHEY_DUPLEX
 args = utils.cmdline_run()
 detectModel = args.detection
 onlyBirds = args.birds
-inclusionThreshold = args.threshold
+inclusionThreshold = float(args.threshold)
 no_saved_stills = args.no_saved_stills
 if float(inclusionThreshold) > 1:inclusionThreshold/=100
 
