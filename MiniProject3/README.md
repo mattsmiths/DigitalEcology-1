@@ -21,3 +21,26 @@ sudo apt-get install libedgetpu1-std
 sudo apt install python3-tflite-runtime libatlas-base-dev
 sudo apt install guvcview uvcdynctrl
 ```
+
+Clone most recent github into a new folder [ to not overwrite any changes you may have made ]
+```bash
+git clone https://github.com/Crall-Lab/DigitalEcology.git /home/pi/DigitalEcologyDL/
+```
+
+Check camera acquisition parameters
+A Guided User Interface (GUI) should appear that allows you to explore the USB-camera's image acquistion parameters. Once you exit, those settings will be saved. You can restore the default settings through "settings>hardware defaults"
+```bash
+guvcview
+```
+
+# Start video stream to display inference from deep learning models
+
+Running an image classifier
+```bash
+cd /home/pi/DigitalEcologyDL/
+python3 streamDLmodel.py
+```
+
+
+
+
