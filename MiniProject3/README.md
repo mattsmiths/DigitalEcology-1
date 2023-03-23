@@ -59,6 +59,13 @@ cd /home/pi/DigitalEcologyDL/MiniProject3/
 python3 streamDLmodel.py -d
 ```
 
+Running an image object detection model [ efficientDet1 trained on COCO dataset ]
+and update the detection threshold to see how accuracy changes
+```bash
+cd /home/pi/DigitalEcologyDL/MiniProject3/
+python3 streamDLmodel.py -d -r 0.75
+```
+
 Running an image object detection model [ efficientDet1 trained on birds from iNaturalist ]
 ```bash
 cd /home/pi/DigitalEcologyDL/MiniProject3/
@@ -70,4 +77,5 @@ Running an image object detection model over a prerecorded video [ efficientDet1
 cd /home/pi/DigitalEcologyDL/MiniProject3/
 python3 streamDLmodel.py -d -b -v
 ```
+# Images and detection data are saved to /home/pi/Documents/detections/$date/
 
