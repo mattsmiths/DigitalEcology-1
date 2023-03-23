@@ -103,5 +103,8 @@ def cmdline_run():
     parser.add_argument(
         '-b', '--birds', default=False, action='store_true',
         help='Run models trained on iNaturalist birds datasets')
+    parser.add_argument(
+        '-v', '--videoSample', default=False, action='store_true',
+        help='Run selected model across example video, creates new csv')
     args = parser.parse_args()
     return args
