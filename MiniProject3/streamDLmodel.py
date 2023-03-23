@@ -88,11 +88,12 @@ cap.set(attr,30)
 #attr = cap.getattr(cv,'CAP_PROP_FOCUS')
 #cap.set(attr,focus)
 
-
+if args.videoSample:
+    cap.release()
+    cap = cv.VideoWriter('/home/pi/DigitalEcologyDL/MiniProject3/birdExample.mp4')
 
 # Create the directory to save detections
 tempDateName = utils.detectionsFolderCreate()
-
 
 
 #check that camera can be used
@@ -176,6 +177,10 @@ while True: #Keep running forever
                 cv.imwrite(imNameSave,frame)
             
             detctSave = '/home/pi/Documents/detections/'+tempDateName+imName_s+'.csv'
+            if args.videoSample:
+                tN = model_path.split('/')[-1].split('.')[0]+'_%s'%(inclusionThreshold)
+                tN.replace('.','_')
+                detctSave = '/home/pi/Documents/detections/'+tempDateName+tN+'.csv'
             if os.path.isfile(detctSave) == False: #make new file everyday??
                 f = open(detctSave, 'w')
                 writer = csv.writer(f)
