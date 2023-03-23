@@ -63,7 +63,7 @@ Running an image object detection model [ efficientDet1 trained on COCO dataset 
 and update the detection threshold to see how accuracy changes
 ```bash
 cd /home/pi/DigitalEcologyDL/MiniProject3/
-python3 streamDLmodel.py -d -r 0.75
+python3 streamDLmodel.py -d -t 0.75
 ```
 
 Running an image object detection model [ efficientDet1 trained on birds from iNaturalist ]
