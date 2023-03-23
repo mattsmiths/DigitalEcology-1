@@ -51,10 +51,8 @@ elif detectModel == True:
         model_path = data_folder + "lite-model_efficientdet_lite1_detection_metadata_1.tflite"
         labels = utils.load_labels("/home/pi/DigitalEcologyDL/MiniProject3/labels/coco-labels-paper.txt")
     else:
-        print('Detection model trained on birds is currently training (~6 hours left)')
-        print('Loading efficientDet trained on COCO dataset temporarily')
-        model_path = data_folder + "lite-model_efficientdet_lite1_detection_metadata_1.tflite"
-        labels = utils.load_labels("/home/pi/DigitalEcologyDL/MiniProject3/labels/coco-labels-paper.txt")
+        model_path = data_folder + "efficientDet_fullTrain_aves_model.tflite"
+        labels = utils.load_labels("/home/pi/DigitalEcologyDL/MiniProject3/labels/mobileV2_aves_labels.txt")
     
     
 interpreter = Interpreter(model_path)
@@ -70,7 +68,10 @@ input_index = interpreter.get_input_details()[0]["index"]
 output_index = interpreter.get_output_details()[0]["index"]
 if detectModel:
     output_indexC  = interpreter.get_output_details()[1]["index"]
-    output_indexS = interpreter.get_output_details()[2]["index"]
+    if onlyBirds:
+        output_indexS = interpreter.get_output_details()[3]["index"]
+    else:
+        output_indexS = interpreter.get_output_details()[2]["index"]
 
 
 #Set the image resolution as specified by command line arguments
@@ -193,6 +194,14 @@ while True: #Keep running forever
     else:
         labelsDetect = interpreter.get_tensor(output_indexC)
         scre = interpreter.get_tensor(output_indexS)
+        if onlyBirds:
+            t = predictions.copy()
+            z = labelsDetect.copy()
+            x = scre.copy()
+            predictions = z.copy()
+            labelsDetect = x.copy()
+            scre = t.copy()
+            
         frame = utils.visualize(frame,predictions[0],labelsDetect[0],labels,scre[0],(imHeight,imWidth),inclusionThreshold)
         cv.imshow('output', frame)
         
