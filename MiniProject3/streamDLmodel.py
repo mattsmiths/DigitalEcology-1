@@ -90,7 +90,7 @@ cap.set(attr,30)
 
 if args.videoSample:
     cap.release()
-    cap = cv.VideoWriter('/home/pi/DigitalEcologyDL/MiniProject3/birdExample.mp4')
+    cap = cv.VideoCapture('/home/pi/DigitalEcologyDL/MiniProject3/birdExample.mp4')
 
 # Create the directory to save detections
 tempDateName = utils.detectionsFolderCreate()
@@ -132,7 +132,10 @@ while True: #Keep running forever
     if detectModel:
         image = (np.expand_dims(image,0)).astype(np.uint8)
     else:
-        image = (np.expand_dims(image/255,0)).astype(np.float32)
+        if onlyBirds:
+            image = (np.expand_dims(image/255,0)).astype(np.uint8)
+        else:
+            image = (np.expand_dims(image/255,0)).astype(np.float32)
     
     #Run inference from model
     interpreter.set_tensor(input_index, image)
@@ -239,7 +242,7 @@ while True: #Keep running forever
     # Stop if any key is pressed
     keyCode = cv.waitKey(10)
     print(keyCode)
-    if keyCode != 255:
+    if keyCode != 255 and keyCode != -1:
         break
     if camSave >0:camSave-=1
     
