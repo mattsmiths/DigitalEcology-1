@@ -225,6 +225,10 @@ while True: #Keep running forever
                 cv.imwrite(imNameSave,frame)
             
             detctSave = '/home/pi/Documents/detections/'+tempDateName+imName_s+'.csv'
+            if args.videoSample:
+                tN = model_path.split('/')[-1].split('.')[0]+'_%s'%(inclusionThreshold)
+                tN.replace('.','_')
+                detctSave = '/home/pi/Documents/detections/'+tempDateName+tN+'.csv'
             if os.path.isfile(detctSave) == False: #make new file every??
                 f = open(detctSave, 'w')
                 writer = csv.writer(f)
