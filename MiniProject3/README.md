@@ -59,5 +59,15 @@ cd /home/pi/DigitalEcologyDL/MiniProject3/
 python3 streamDLmodel.py -d
 ```
 
+Running an image object detection model [ efficientDet1 trained on birds from iNaturalist ]
+```bash
+cd /home/pi/DigitalEcologyDL/MiniProject3/
+python3 streamDLmodel.py -d -b
+```
 
+Running an image object detection model over a prerecorded video [ efficientDet1 trained on birds from iNaturalist ]
+```bash
+cd /home/pi/DigitalEcologyDL/MiniProject3/
+python3 streamDLmodel.py -d -b -v
+```
 
